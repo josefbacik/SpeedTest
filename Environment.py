@@ -47,11 +47,21 @@ class Environment:
         diff -- the percentage of difference between 2 runs
         """
         if diff < 5:
-            output = testname + "...%.2f%%: PASS" % diff
+            output = "%.2f%%: PASS" % diff
         else:
-            output = testname + "...%.2f%%: FAIL" % diff
+            output = "%.2f%%: FAIL" % diff
         self.log(output + "\n")
         print output
+
+    def test_start(self, testname):
+        """Called when starting a test
+
+        testname -- the name of the test
+        """
+        output = testname + "..."
+        self.log(output)
+        sys.stdout.write(output)
+        sys.stdout.flush()
 
     def load_last_result(self, testname):
         """Load the string of the last result for this test
