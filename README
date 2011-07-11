@@ -1,0 +1,18 @@
+Just run
+
+./perf-test.py <profile>
+
+The format of a profile is
+
+[name]
+option=value
+
+The options are
+
+directory - This is required, it is the directory used to test in.
+fs - This is optional, but required if you are going to mkfs the fs each time.
+mkfs - True/False, defaults to false, we will mkfs the fs each run through
+mkfs_opts - Options to pass to the mkfs command
+umount - True/False, defaults to true, we will unmount/mount each time we do a
+	test
+device - This is required, it is the device that will be mounted/unmounted
