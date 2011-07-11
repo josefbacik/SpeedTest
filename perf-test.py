@@ -11,12 +11,12 @@ Start main program area
 
 parser = argparse.ArgumentParser(description="Run a suite of tests")
 parser.add_argument('profile', help="Profile to use for the tests")
-parser.add_argument('--verbose', dest='verbose', default=False, action='store_true', help="Enable verbose mode")
+parser.add_argument('--quiet', dest='quiet', default=False, action='store_true', help="Enable quiet mode")
 
 args = parser.parse_args()
 
 env = Environment()
-env.verbose = args.verbose
+env.verbose = not args.quiet
 env.load_config(args.profile)
 
 env.setup_environment()

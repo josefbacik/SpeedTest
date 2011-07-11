@@ -126,12 +126,10 @@ class Environment:
                 print "Error mounting %s" % self.device
                 sys.exit()
 
-    def test_result(self, testname, version, units, time):
+    def test_result(self, result):
         if self.results == None:
             return
-        output = testname + ": " + str(version) + " " + str(units) + " " + str(time)
-        output = output + "\n"
-        self.results.write(output)
+        self.results.write(result)
 
     def next_test(self):
         if self.umount:

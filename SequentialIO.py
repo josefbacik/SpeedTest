@@ -3,29 +3,27 @@ from Environment import Environment
 
 class SequentialIO:
     def __init__(self):
-        self._name = "Sequential Write"
-    def test_name(self):
-        return self._name
+        # This space intentially left blank
+        pass
     def _sequential_write(self, env, name, size):
         """Do a sequential write that is small enough to be entirely in ram"""
         env.test_start(name)
-        r = env.load_last_result(name)
-        result = r.split(' ')
+        result = env.load_last_result(name).split(' ')
 
         start = time()
         env.run_command(["dd", "if=/dev/zero", "of=" + env.dir + "/" + name,
             "bs=1M", "count=" + str(size)])
         end = time();
-        env.test_result(name, 1, size, end - start)
         time_diff = end - start
 
         # Result is in this format
         # Name: <version> <number of mb written> <seconds>
-        if len(result) == 4:
+        if len(result) == 4 and int(result[1]) == 1:
             diff = env.percent_difference_time(float(result[3]), time_diff)
             env.test_complete(name, diff)
         else:
             env.test_complete(name, 0)
+        env.test_result(name + ": 1 " + str(size) + " " + str(time_diff) + "\n")
         if env.verbose:
             print("\tTime: %.2f s, Throughput: %.2f Mb/s" % (time_diff, size / time_diff))
 
