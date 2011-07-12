@@ -21,10 +21,13 @@ class Environment:
     def percent_difference_time(self, old, new):
         """Calculate the percent difference between 2 time values
 
+        Negative means we went slower than before, positive means we went faster
+        than before.
+
         old -- the old value
         new -- the new value
         """
-        diff = new - old
+        diff = old - new
         avg = (old + new) / 2
         perc = (diff / avg) * 100
         return perc
@@ -46,7 +49,7 @@ class Environment:
         testname -- the name of the test that completed
         diff -- the percentage of difference between 2 runs
         """
-        if diff < 5:
+        if diff > -5:
             output = "%.2f%%: PASS" % diff
         else:
             output = "%.2f%%: FAIL" % diff

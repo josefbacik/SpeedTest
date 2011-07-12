@@ -26,23 +26,49 @@ class SequentialIO:
         env.test_result(name + ": 1 " + str(size) + " " + str(time_diff) + "\n")
         if env.verbose:
             print("\tTime: %.2f s, Throughput: %.2f Mb/s" % (time_diff, size / time_diff))
+        return size
 
     def _sequential_write_ram(self, env):
         size = env.system_memory()
         size = int(size / 4)
-        self._sequential_write(env, "SequentialWriteRam", size)
+        return self._sequential_write(env, "SequentialWriteRam", size)
 
     def _sequential_write_large(self, env):
         size = env.system_memory()
         size = int(size * 2)
-        self._sequential_write(env, "SequentialWriteLarge", size)
+        return self._sequential_write(env, "SequentialWriteLarge", size)
+
+    def _sequential_read(self, env, name, size):
+        """Do a sequential read of the large sequential write file we created"""
+        env.test_start(name)
+        result = env.load_last_result(name).split(' ')
+
+        start = time()
+        env.run_command(["dd", "if=" + env.dir + "/SequentialWriteRam",
+            "of=/dev/null", "bs=1M"])
+        end = time();
+        time_diff = end - start
+
+        if len(result) == 4 and int(result[1]) == 1:
+            diff = env.percent_difference_time(float(result[3]), time_diff)
+            env.test_complete(name, diff)
+        else:
+            env.test_complete(name, 0)
+        if env.verbose:
+            print("\t Time: %.2f s, Throughput: %.2f Mb/s" % (time_diff, size / time_diff))
+        env.test_result(name + ": 1 " + str(size) + " " + str(time_diff) + "\n")
 
     def run(self, env):
         """Run the sequential IO tests
 
         env -- the environment that we are running in
         """
-        self._sequential_write_ram(env)
+        size = self._sequential_write_ram(env)
+        # do a read immediately for a hot read time
         env.next_test()
         self._sequential_write_large(env)
+        env.next_test()
+        self._sequential_read(env, "SequentialColdRead", size)
+        self._sequential_read(env, "SequentialReRead", size)
+
 # vim: set expandtab tabstop=4 shiftwidth=4
