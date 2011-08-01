@@ -49,7 +49,7 @@ class SequentialIO:
     def _sequential_read(self, env, name, size):
         """Do a sequential read of the large sequential write file we created"""
         env.test_start(name)
-        result = env.load_best_result(name, compare_results).split(' ');
+        result = env.load_best_result(name, self.compare_results).split(' ');
 
         start = time()
         env.run_command(["dd", "if=" + env.dir + "/SequentialWriteRam",
