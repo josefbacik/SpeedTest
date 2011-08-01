@@ -5,10 +5,18 @@ class SequentialIO:
     def __init__(self):
         # This space intentially left blank
         pass
+
+    def compare_results(self, str1, str2):
+        first = str1.split(' ')
+        second = str2.split(' ')
+        if float(first[3]) < float(second[3]):
+            return str1
+        return str2
+
     def _sequential_write(self, env, name, size):
         """Do a sequential write that is small enough to be entirely in ram"""
         env.test_start(name)
-        result = env.load_last_result(name).split(' ')
+        result = env.load_best_result(name, self.compare_results).split(' ');
 
         start = time()
         env.run_command(["dd", "if=/dev/zero", "of=" + env.dir + "/" + name,
@@ -41,7 +49,7 @@ class SequentialIO:
     def _sequential_read(self, env, name, size):
         """Do a sequential read of the large sequential write file we created"""
         env.test_start(name)
-        result = env.load_last_result(name).split(' ')
+        result = env.load_best_result(name, compare_results).split(' ');
 
         start = time()
         env.run_command(["dd", "if=" + env.dir + "/SequentialWriteRam",

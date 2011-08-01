@@ -79,6 +79,25 @@ class Environment:
                 return line
         return ""
 
+    def load_best_result(self, testname, func):
+        """Load the string of the best result for this test
+
+        testname -- the test to look for in this results file.
+        func -- the func that will test between two strings and return the one
+            that is the best.
+        """
+        result = None
+        if self.results == None:
+            return result
+        self.results.seek(0, os.SEEK_SET)
+        for line in self.results:
+            if re.search(testname, line):
+                if result is None:
+                    result = line
+                    continue
+                result = func(result, line)
+        return result
+
     def run_command(self, command):
         """Run a command and redirect it's output to the logfile
 
