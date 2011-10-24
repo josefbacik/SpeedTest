@@ -17,6 +17,7 @@ class Environment:
         self.mkfs_opts = ""
         self.verbose = False
         self.total_memory = 0
+        self.total_cpus = 0
 
     def percent_difference_time(self, old, new):
         """Calculate the percent difference between 2 time values
@@ -42,6 +43,20 @@ class Environment:
         self.total_memory = int(match.group(1))
         self.total_memory = self.total_memory / 1024
         return self.total_memory
+
+    def system_cpus(self):
+        """Return the number of CPUs on the system"""
+        if self.total_cpus != 0:
+            return self.total_cpus
+        cpuinfo = open("/proc/cpuinfo", 'r')
+        processor_re = re.compile("processor\s+\:\s(\d+)")
+        for i in cpuinfo:
+            match = processor_re.search(i)
+            if match is None:
+                continue
+            self.total_cpus = int(match.group(1))
+        self.total_cpus += 1
+        return self.total_cpus
 
     def test_complete(self, testname, diff):
         """Called when a test completes
